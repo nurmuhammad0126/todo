@@ -8,7 +8,7 @@ import 'package:todo/core/extensions/widget_extension.dart';
 import 'package:todo/core/widgets/w_app_bar.dart';
 import 'package:todo/core/widgets/w_container.dart';
 import 'package:todo/core/widgets/w_scale_animation.dart';
-import 'package:todo/views/onboarding/change_auth_screen.dart';
+import 'package:todo/feature/onboarding/change_auth_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -46,7 +46,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ChangeAuthScreen()),
+        MaterialPageRoute(builder: (context) => const ChangeAuthScreen()),
       );
     }
   }
@@ -59,6 +59,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = context.screenHeight;
+    final screenWidth = context.screenWidth;
+
     return Scaffold(
       appBar: WCustomAppBar(
         leading: WScaleAnimationWidget(
@@ -69,69 +72,67 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               curve: Curves.easeInOut,
             );
           },
-
-          child: Text(
-            "SKIP",
-            style: AppTextStyles.s22w400,
-          ).paddingOnly(left: 20),
+          child: Text("SKIP", style: AppTextStyles.s22w400).paddingOnly(left: 20),
         ),
       ),
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          50.height,
+          (screenHeight * 0.05).height,
           Expanded(
-            child: PageView(
+            child: PageView.builder(
               controller: _pageController,
-              onPageChanged: (value) {
-                setState(() => _currentPage = value);
-              },
-              children: List.generate(3, (index) {
+              onPageChanged: (value) => setState(() => _currentPage = value),
+              itemCount: images.length,
+              itemBuilder: (_, index) {
                 return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Image.asset(
                       images[index],
-                      width: context.screenWidth * 0.6,
+                      width: screenWidth * 0.6,
+                      height: screenHeight * 0.3,
+                      fit: BoxFit.contain,
                     ),
-                    50.height,
+                    (screenHeight * 0.06).height,
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (child, animation) =>
-                          FadeTransition(opacity: animation, child: child),
                       child: Text(
                         text1[index],
                         key: ValueKey(text1[index]),
                         style: AppTextStyles.s26w700,
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                    43.height,
+                    (screenHeight * 0.04).height,
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (child, animation) =>
-                          FadeTransition(opacity: animation, child: child),
-                      child: Text(
-                        text2[index],
-                        key: ValueKey(text2[index]),
-                        style: AppTextStyles.s20w700,
-                        textAlign: TextAlign.center,
-                      ).paddingSymmetric(horizontal: 35.w),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
+                        child: Text(
+                          text2[index],
+                          key: ValueKey(text2[index]),
+                          style: AppTextStyles.s20w700,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
                   ],
                 );
-              }),
+              },
             ),
           ),
           SmoothPageIndicator(
             controller: _pageController,
             count: 3,
             effect: WormEffect(
-              dotWidth: 24,
-              dotHeight: 5,
+              dotWidth: 24.toW(context),
+              dotHeight: 5.toH(context),
               activeDotColor: AppColors.border,
               dotColor: AppColors.icon,
             ),
           ),
-          50.height,
+          (screenHeight * 0.05).height,
           Align(
             alignment: Alignment.bottomCenter,
             child: Row(
@@ -151,6 +152,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 WScaleAnimationWidget(
                   onTap: _nextPage,
                   child: WContainer(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.08,
+                      vertical: screenHeight * 0.015,
+                    ),
                     child: Text(
                       _currentPage >= 2 ? "GET STARTED" : "NEXT",
                       style: AppTextStyles.s22w400,
@@ -158,7 +163,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ],
-            ).paddingSymmetric(horizontal: 20.w, vertical: 30.w),
+            ).paddingSymmetric(
+              horizontal: screenWidth * 0.05,
+              vertical: screenHeight * 0.03,
+            ),
           ),
         ],
       ),

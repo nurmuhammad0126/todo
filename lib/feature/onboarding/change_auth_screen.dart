@@ -6,8 +6,8 @@ import 'package:todo/core/extensions/widget_extension.dart';
 import 'package:todo/core/widgets/w_app_bar.dart';
 import 'package:todo/core/widgets/w_container.dart';
 import 'package:todo/core/widgets/w_scale_animation.dart';
-import 'package:todo/views/auth/login_screen.dart';
-import 'package:todo/views/auth/register_screen.dart';
+import 'package:todo/feature/auth/presentation/pages/login_screen.dart';
+import 'package:todo/feature/auth/presentation/pages/register_screen.dart';
 
 class ChangeAuthScreen extends StatelessWidget {
   const ChangeAuthScreen({super.key});
@@ -17,7 +17,7 @@ class ChangeAuthScreen extends StatelessWidget {
     return Scaffold(
       appBar: WCustomAppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () => Navigator.pop(context),
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             size: 34,

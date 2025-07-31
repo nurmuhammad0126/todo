@@ -6,12 +6,10 @@ import 'package:todo/core/extensions/color_extension.dart';
 import 'package:todo/core/extensions/num_extension.dart';
 import 'package:todo/core/widgets/w_container.dart';
 import 'package:todo/core/widgets/w_scale_animation.dart';
-
-import '../add_task/add_task_screen.dart';
-import '../calendar/views/calendar_screen.dart';
-import '../focuce/focuse_screen.dart';
-import '../home/home_screen.dart';
-import '../profile/profile_screen.dart';
+import 'package:todo/feature/calendar/views/calendar_screen.dart';
+import 'package:todo/feature/focuce/views/focuse_screen.dart';
+import 'package:todo/feature/home/home_screen.dart';
+import 'package:todo/feature/profile/views/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -21,7 +19,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 4;
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -122,5 +120,14 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
     );
+  }
+}
+
+class AddTaskScreen extends StatelessWidget {
+  const AddTaskScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Column(children: [Text("Salm")]));
   }
 }

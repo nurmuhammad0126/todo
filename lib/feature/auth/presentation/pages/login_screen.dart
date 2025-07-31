@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/core/constants/app_text_style.dart';
 import 'package:todo/core/extensions/num_extension.dart';
 import 'package:todo/core/extensions/widget_extension.dart';
@@ -6,43 +7,82 @@ import 'package:todo/core/widgets/w_app_bar.dart';
 import 'package:todo/core/widgets/w_container.dart';
 import 'package:todo/core/widgets/w_scale_animation.dart';
 import 'package:todo/core/widgets/w_text_field.dart';
+import 'package:todo/core/constants/app_colors.dart';
+import 'package:todo/feature/auth/presentation/auth_riverpod/auth_riverpod.dart';
+import 'package:todo/feature/auth/presentation/pages/register_screen.dart';
+import 'package:todo/feature/main/main_screen.dart';
 
-import '../../core/constants/app_colors.dart';
-
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   late final TextEditingController _loginController;
   late final TextEditingController _passwordController;
-  late final TextEditingController _passwordConfirmController;
 
   @override
   void initState() {
     super.initState();
     _loginController = TextEditingController();
     _passwordController = TextEditingController();
-    _passwordConfirmController = TextEditingController();
   }
 
   @override
   void dispose() {
     _loginController.dispose();
     _passwordController.dispose();
-    _passwordConfirmController.dispose();
     super.dispose();
+  }
+
+  void _onLogin() {
+    final email = _loginController.text.trim();
+    final password = _passwordController.text.trim();
+    if (email.isNotEmpty && password.isNotEmpty) {
+      ref
+          .read(authProvider.notifier)
+          .login(
+            email: email,
+            password: password,
+            onFailure: () {
+              _showErrorSnackbar("Bu foydalanuvchi oldin ro'yhatdan o'tgan !");
+            },
+            onSucces: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MainScreen()),
+                (route) => false,
+              );
+            },
+          );
+    } else {
+      _showErrorSnackbar("Email yoki parol bo'sh bo'lmasligi kerak!");
+    }
+  }
+
+  void _showErrorSnackbar(String msg) {
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            msg,
+            style: AppTextStyles.s16w400.copyWith(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
     return Scaffold(
       appBar: WCustomAppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () => Navigator.pop(context),
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             size: 34,
@@ -52,29 +92,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Register",
-              style: AppTextStyles.s10w800.copyWith(fontSize: 32),
-            ),
-            23.height,
+            41.height,
+            Text("Login", style: AppTextStyles.s10w800.copyWith(fontSize: 32)),
+            50.height,
             Text("Username", style: AppTextStyles.s16w400),
             8.height,
-            WTextField(hintText: "Enter your Username"),
+            WTextField(
+              controller: _loginController,
+              hintText: "Enter your Username",
+            ),
             25.height,
             Text("Password", style: AppTextStyles.s16w400),
             8.height,
-            WTextField(hintText: "Password ", obscureText: true),
-            25.height,
-            Text("Confirm Password", style: AppTextStyles.s16w400),
-            8.height,
-            WTextField(hintText: "Confirm Password", obscureText: true),
-            40.height,
+            WTextField(
+              controller: _passwordController,
+              hintText: "Enter your Password",
+              obscureText: true,
+            ),
+            69.height,
+
             WScaleAnimationWidget(
+              onTap: _onLogin,
               child: WContainer(
+                isLoading: authState.isLoading,
                 height: 48.h,
                 child: Text("Login", style: AppTextStyles.s18w400),
               ),
@@ -82,13 +126,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             31.height,
             Row(
               children: [
-                Expanded(child: Divider(color: AppColors.textSecondary)),
+                const Expanded(child: Divider(color: AppColors.textSecondary)),
                 Text(
                   "or",
                   style: AppTextStyles.s16w400,
                 ).paddingSymmetric(horizontal: 8.w),
-
-                Expanded(child: Divider(color: AppColors.textSecondary)),
+                const Expanded(child: Divider(color: AppColors.textSecondary)),
               ],
             ),
             29.height,
@@ -99,6 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.facebook, color: AppColors.surface, size: 36),
+                  8.width,
                   Text("Login with Facebook", style: AppTextStyles.s24w400),
                 ],
               ),
@@ -111,7 +155,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.apple, color: AppColors.surface, size: 36),
-                  Text("Login with Appe", style: AppTextStyles.s24w400),
+                  8.width,
+                  Text("Login with Apple", style: AppTextStyles.s24w400),
                 ],
               ),
             ),
@@ -121,7 +166,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 Text("Don’t have an account? ", style: AppTextStyles.s14w400),
                 WScaleAnimationWidget(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    );
+                  },
                   child: Text("Register", style: AppTextStyles.s14w700),
                 ),
               ],

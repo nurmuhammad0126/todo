@@ -16,6 +16,21 @@ class Assets {
   static const String profileIcon = "${_iconPath}profile_icon.svg";
   static const String profileIconFilled = "${_iconPath}profile_icon_filled.svg";
 
+  static const String aboutAsIcon = "${_iconPath}about_as_icon.svg";
+  static const String cameraIcon = "${_iconPath}camera_icon.svg";
+  static const String faqIcon = "${_iconPath}faq_icon.svg";
+  static const String helpAndFeedbackIcon =
+      "${_iconPath}help_and_feedback_icon.svg";
+
+  static const String tIcon = "${_iconPath}t_icon.svg";
+  static const String saveIcon = "${_iconPath}save_icon.svg";
+  static const String changeAppLanguageIcon =
+      "${_iconPath}change_app_language_icon.svg";
+  static const String changeAppColorIcon =
+      "${_iconPath}change_app_color_icon.svg";
+
+  static const String supportUsIcon = "${_iconPath}support_us_icon.svg";
+  static const String logout = "${_iconPath}logout_icon.svg";
   static const String dropDownIcon = "${_iconPath}drop_down_icon.svg";
   static const String flagIcon = "${_iconPath}flag_icon.svg";
   static const String keyIcon = "${_iconPath}key_icon.svg";
